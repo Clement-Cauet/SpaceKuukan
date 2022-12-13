@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_space"
+        android:icon="@android:drawable/ic_menu_mapmode"
+        android:title="@string/title_space" />
+
+    <item
+        android:id="@+id/navigation_base"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="@string/title_base" />
+
+</menu>
