@@ -19,7 +19,7 @@ public class Starship {
         this.speed          = speed;
         this.cost           = cost;
         this.power          = power;
-        this.mining_rate    = cost;
+        this.mining_rate    = mining_rate;
 
     }
 }

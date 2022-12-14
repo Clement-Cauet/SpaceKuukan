@@ -10,14 +10,14 @@ public class Base extends Planet {
     protected int space_port;
     protected int total_power;
 
-    public static synchronized Base getInstance(int id, String name, int power, int resource, int faction) {
+    public static synchronized Base getInstance(int id, String name, int power, int resource, int latitude, int longitude, int faction) {
         if (instanceBase == null)
-            instanceBase = new Base(id, name, power, resource, faction);
+            instanceBase = new Base(id, name, power, resource, latitude, longitude, faction);
         return instanceBase;
     }
 
-    public Base(int id, String name, int power, int resource, int faction) {
-        super(id, name, power, resource);
+    public Base(int id, String name, int power, int resource, int latitude, int longitude, int faction) {
+        super(id, name, power, resource, latitude, longitude);
 
         this.faction = faction;
 

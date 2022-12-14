@@ -9,8 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.spacekuukan.application.databinding.FragmentBaseBinding;
+import com.spacekuukan.application.function.Base;
 
 public class FragmentBase extends Fragment {
+
+    private Base base;
 
     private FragmentBaseBinding binding;
 
@@ -19,6 +22,9 @@ public class FragmentBase extends Fragment {
 
         binding = FragmentBaseBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        //base.getInstance();
+
         return root;
     }
 
