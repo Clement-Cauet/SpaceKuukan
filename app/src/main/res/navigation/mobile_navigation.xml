@@ -6,6 +6,12 @@
     app:startDestination="@+id/navigation_space">
 
     <fragment
+        android:id="@+id/navigation_shop"
+        android:name="com.spacekuukan.application.ui.FragmentShop"
+        android:label="@string/title_shop"
+        tools:layout="@layout/fragment_shop" />
+
+    <fragment
         android:id="@+id/navigation_space"
         android:name="com.spacekuukan.application.ui.FragmentSpace"
         android:label="@string/title_space"

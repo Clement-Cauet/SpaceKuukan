@@ -1,0 +1,42 @@
+CREATE TABLE 'planet' (
+    'id' INTEGER PRIMARY KEY AUTOINCREMENT,
+    'name' varchar(30) NOT NULL,
+    'power' int(11),
+    'latitude' int(11),
+    'longitude' int(11),
+    'credit' int(11),
+    'hydrogen' int(11)
+);
+
+INSERT INTO planet(name, latitude, longitude, credit, hydrogen) VALUES
+	('', 0, 0, 300, 100);
+
+CREATE TABLE 'spaceport' (
+    'id' INTEGER PRIMARY KEY AUTOINCREMENT,
+    'level' int(11) DEFAULT 1 NOT NULL,
+    'cost' int(11) DEFAULT 100 NOT NULL
+);
+
+CREATE TABLE 'starship' (
+    'id' INTEGER PRIMARY KEY AUTOINCREMENT,
+    'name' varchar(30) NOT NULL,
+	'type' int(11) NOT NULL,
+    'level' int(11) DEFAULT 1 NOT NULL,
+    'speed' int(11) NOT NULL,
+    'cost' int(11) NOT NULL,
+    'power' int(11),
+    'mining_rate' int(11),
+    'latitude' int(11),
+    'longitude' int(11),
+    'buy' tinyint(1) DEFAULT false
+);
+
+INSERT INTO starship(name, type, speed, cost, power, mining_rate) VALUES
+	('starship1', 1, 5, 100, 10, 0),
+	('starship2', 2, 5, 100, 0, 10),
+	('starship3', 2, 15, 300, 20, 0),
+	('starship4', 1, 35, 300, 15, 0),
+	('starship5', 1, 10, 300, 5, 5),
+	('starship6', 1, 20, 300, 5, 0),
+	('starship7', 2, 30, 1000, 20, 0),
+	('starship8', 1, 50, 1000, 0, 30);

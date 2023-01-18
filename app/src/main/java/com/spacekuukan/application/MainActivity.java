@@ -11,8 +11,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.spacekuukan.application.databinding.ActivityMainBinding;
+import com.spacekuukan.application.db.DatabaseAccess;
+import com.spacekuukan.application.db.DatabaseThread;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DatabaseAccess databaseAccess;
+    private DatabaseThread databaseThread;
 
     private ActivityMainBinding binding;
 
@@ -20,8 +25,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
+        databaseAccess.open();
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        databaseThread = DatabaseThread.getInstance(databaseAccess, findViewById(R.id.credit_value), findViewById(R.id.hydrogen_value));
+        databaseThread.start();
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
 

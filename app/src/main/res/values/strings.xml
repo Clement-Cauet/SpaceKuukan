@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Space Kuukan</string>
+
+    <string name="title_shop">Shop</string>
     <string name="title_space">Space</string>
     <string name="title_base">Base</string>
+
+    <string name="buy_button">Buy</string>
+    <string name="sell_button">Sell</string>
+    <string name="custom_button">Custom</string>
 </resources>

@@ -7,6 +7,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class DatabaseAccess {
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase db;
@@ -38,18 +40,20 @@ public class DatabaseAccess {
     }
 
     //Select the list of Planet in database
-    public String[][] selectPlanet() {
+    public ArrayList selectPlanet() {
 
         String query = "select * from planet";
 
         cursor = db.rawQuery(query, new String[]{});
 
-        String[][] result = new String[6][100];
+        ArrayList<ArrayList> result = new ArrayList<>();
 
-        for(int j = 0; cursor.moveToNext(); j++) {
-            for(int i = 0; i < 6; i++) {
-                result[i][j] = cursor.getString(i);
+        while(cursor.moveToNext()) {
+            ArrayList<String> list = new ArrayList<>();
+            for(int i = 0; i < 6; i++){
+                list.add(cursor.getString(i));
             }
+            result.add(list);
         }
 
         return result;
@@ -57,20 +61,19 @@ public class DatabaseAccess {
     }
 
     //Select Planet data in the database
-    public String[] selectPlanetData(int id) {
+    public ArrayList selectPlanetData(int id) {
 
         String query = "select * from planet where id = "+ id;
 
         cursor = db.rawQuery(query, new String[]{});
 
-        String[] result = new String[6];
-        cursor.moveToNext();
-        result[0] = cursor.getString(0);
-        result[1] = cursor.getString(1);
-        result[2] = cursor.getString(2);
-        result[3] = cursor.getString(3);
-        result[4] = cursor.getString(4);
-        result[5] = cursor.getString(5);
+        ArrayList<String> result = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            for(int i = 0; i < 7; i++){
+                result.add(cursor.getString(i));
+            }
+        }
 
         return result;
 
@@ -115,6 +118,24 @@ public class DatabaseAccess {
 
     }
 
+    //Update data Starship in the database
+    public void updateCreditPlanet(int id, int credit) {
+
+        String[] key = { "credit" };
+
+        int[] value = { credit };
+
+        String query = "id = "+ id;
+        ContentValues values = new ContentValues();
+
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
+        }
+
+        db.update("planet", values, query, null);
+
+    }
+
     //Delete a Planet in the database
     public void deletePlanet(int id) {
 
@@ -124,18 +145,72 @@ public class DatabaseAccess {
 
     }
 
-    //Select the list of Spaceship in database
-    public String[][] selectSpaceship() {
+    //Select the list of Starship in database
+    public ArrayList selectStarship() {
 
-        String query = "select * from spaceship";
+        String query = "select * from starship";
 
         cursor = db.rawQuery(query, new String[]{});
 
-        String[][] result = new String[9][100];
+        ArrayList<ArrayList> result = new ArrayList<>();
 
-        for(int j = 0; cursor.moveToNext(); j++) {
-            for(int i = 0; i < 6; i++) {
-                result[i][j] = cursor.getString(i);
+        while(cursor.moveToNext()) {
+            ArrayList<String> list = new ArrayList<>();
+            for(int i = 0; i < 11; i++){
+                list.add(cursor.getString(i));
+            }
+            result.add(list);
+        }
+
+        return result;
+
+    }
+
+    //Select the list of Shop Starship in database
+    public ArrayList selectStarship(int type, boolean shop) {
+
+        String query = "select * from starship where type = " + type + " and buy = " + shop;
+
+        cursor = db.rawQuery(query, new String[]{});
+
+        ArrayList<ArrayList> result = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            ArrayList<String> list = new ArrayList<>();
+            for(int i = 0; i < 11; i++){
+                list.add(cursor.getString(i));
+            }
+            result.add(list);
+        }
+
+        return result;
+
+    }
+
+    //Select the list of Starship in database
+    public int selectCountStarship(boolean buy) {
+
+        String query = "select count(*) from starship where buy = " + buy;
+
+        cursor = db.rawQuery(query, new String[]{});
+
+        cursor.moveToNext();
+        return cursor.getInt(0);
+
+    }
+
+    //Select Starship data in the database
+    public ArrayList selectStarshipData(int id) {
+
+        String query = "select * from starship where id = "+ id;
+
+        cursor = db.rawQuery(query, new String[]{});
+
+        ArrayList<String> result = new ArrayList<>();
+
+        if(cursor.moveToNext()) {
+            for(int i = 0; i < 11; i++) {
+                result.add(cursor.getString(i));
             }
         }
 
@@ -143,72 +218,67 @@ public class DatabaseAccess {
 
     }
 
-    //Select Spaceship data in the database
-    public String[] selectSpaceshipData(int id) {
+    //Insert a new Starship in the database
+    public void insertStarship(String name, String level, String speed, String cost, String power, String mining_rate, String latitude, String longitude) {
 
-        String query = "select * from planet where id = "+ id;
+        String[] key = { "name", "level", "speed", "cost", "power", "mining_rate", "latitude", "longitude" };
 
-        cursor = db.rawQuery(query, new String[]{});
-
-        String[] result = new String[9];
-        cursor.moveToNext();
-        result[0] = cursor.getString(0);
-        result[1] = cursor.getString(1);
-        result[2] = cursor.getString(2);
-        result[3] = cursor.getString(3);
-        result[4] = cursor.getString(4);
-        result[5] = cursor.getString(5);
-        result[6] = cursor.getString(6);
-        result[7] = cursor.getString(7);
-        result[8] = cursor.getString(8);
-
-        return result;
-
-    }
-
-    //Insert a new Spaceship in the database
-    public void insertSpaceship(String name, String level, String speed, String cost, String power, String mining_rate, String latitude, String longitude) {
-
-        String[] insert_key = { "name", "level", "speed", "cost", "power", "mining_rate", "latitude", "longitude" };
-
-        String[] insert_value = { name, level, speed, cost, power, mining_rate, latitude, longitude };
+        String[] value = { name, level, speed, cost, power, mining_rate, latitude, longitude };
 
         ContentValues values = new ContentValues();
 
-        for(int i = 0; i < 8; i++) {
-            values.put(insert_key[i], insert_value[i]);
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
         }
 
         try {
-            db.insert("planet", null, values);
+            db.insert("starship", null, values);
         } catch (SQLException e) {
             System.out.println(e);
         }
 
     }
 
-    //Update data Spaceship in the database
-    public void updateSpaceship(int id, String name, String level, String speed, String cost, String power, String mining_rate, String latitude, String longitude) {
+    //Update data Starship in the database
+    public void updateStarship(int id, boolean buy) {
 
-        String[] insert_key = { "name", "level", "speed", "cost", "power", "mining_rate", "latitude", "longitude" };
+        String[] key = { "buy" };
 
-        String[] update_value = { name, level, speed, cost, power, mining_rate, latitude, longitude };
+        boolean[] value = { buy };
 
         String query = "id = "+ id;
         ContentValues values = new ContentValues();
 
-        for(int i = 0; i < 22; i++) {
-            values.put(insert_key[i], update_value[i]);
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
         }
 
-        db.update("planet", values, query, null);
+        db.update("starship", values, query, null);
 
     }
 
-    //Delete a Spaceship in the database
-    public void deleteSpaceship(int id) {
+    //Update data Starship in the database
+    public void updateStarship(int id, String name, String level, String speed, String cost, String power, String mining_rate, String latitude, String longitude, String buy) {
 
-        String query = "delete from spaceship where id = "+ id;
+        String[] key = { "name", "level", "speed", "cost", "power", "mining_rate", "latitude", "longitude", "buy" };
+
+        String[] value = { name, level, speed, cost, power, mining_rate, latitude, longitude, buy };
+
+        String query = "id = "+ id;
+        ContentValues values = new ContentValues();
+
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
+        }
+
+        db.update("starship", values, query, null);
+
+    }
+
+    //Delete a Starship in the database
+    public void deleteStarship(int id) {
+
+        String query = "delete from starship where id = "+ id;
 
         db.execSQL(query);
 

@@ -2,13 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/navigation_shop"
+        android:icon="@drawable/ic_shop"
+        android:title="@string/title_shop" />
+    <item
         android:id="@+id/navigation_space"
-        android:icon="@android:drawable/ic_menu_mapmode"
+        android:icon="@drawable/ic_space"
         android:title="@string/title_space" />
 
     <item
         android:id="@+id/navigation_base"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@drawable/ic_planet"
         android:title="@string/title_base" />
 
 </menu>

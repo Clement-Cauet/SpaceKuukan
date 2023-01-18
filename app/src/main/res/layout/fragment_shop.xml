@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.FragmentBase" >
+    tools:context=".ui.FragmentShop" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,14 +14,13 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <Spinner
-            android:id="@+id/spinner_base_menu"
+            android:id="@+id/spinner_shop_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="1"
             android:dropDownWidth="wrap_content"
             android:dropDownVerticalOffset="30dp"
@@ -31,8 +30,9 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
+
     </LinearLayout>
 
     <ScrollView
@@ -40,9 +40,10 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/base_page"
+            android:id="@+id/shop_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
+
 </LinearLayout>

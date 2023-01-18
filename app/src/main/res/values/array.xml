@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="base_menu_spinner">
+        <item name="spaceport_spinner">Space Port</item>
+        <item name="starship_spinner">Starship</item>
+    </string-array>
+</resources>
