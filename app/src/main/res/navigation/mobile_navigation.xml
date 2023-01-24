@@ -22,4 +22,10 @@
         android:name="com.spacekuukan.application.ui.FragmentBase"
         android:label="@string/title_base"
         tools:layout="@layout/fragment_base" />
+
+    <fragment
+        android:id="@+id/fragmentManageSystem"
+        android:name="com.spacekuukan.application.ui.FragmentManageSystem"
+        android:label="fragment_manage_system"
+        tools:layout="@layout/fragment_manage_system" />
 </navigation>

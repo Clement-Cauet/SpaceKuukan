@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.ArrayMap;
 
 import java.util.ArrayList;
 
@@ -156,7 +157,7 @@ public class DatabaseAccess {
 
         while(cursor.moveToNext()) {
             ArrayList<String> list = new ArrayList<>();
-            for(int i = 0; i < 11; i++){
+            for(int i = 0; i < 12; i++){
                 list.add(cursor.getString(i));
             }
             result.add(list);
@@ -177,7 +178,7 @@ public class DatabaseAccess {
 
         while(cursor.moveToNext()) {
             ArrayList<String> list = new ArrayList<>();
-            for(int i = 0; i < 11; i++){
+            for(int i = 0; i < 12; i++){
                 list.add(cursor.getString(i));
             }
             result.add(list);
@@ -209,7 +210,7 @@ public class DatabaseAccess {
         ArrayList<String> result = new ArrayList<>();
 
         if(cursor.moveToNext()) {
-            for(int i = 0; i < 11; i++) {
+            for(int i = 0; i < 12; i++) {
                 result.add(cursor.getString(i));
             }
         }
@@ -240,6 +241,42 @@ public class DatabaseAccess {
     }
 
     //Update data Starship in the database
+    public void updateStarship(int id, String nickname) {
+
+        String[] key = { "nickname" };
+
+        String[] value = { nickname };
+
+        String query = "id = "+ id;
+        ContentValues values = new ContentValues();
+
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
+        }
+
+        db.update("starship", values, query, null);
+
+    }
+
+    //Update data Starship in the database
+    public void updateStarship(int id, int level) {
+
+        String[] key = { "level" };
+
+        int[] value = { level };
+
+        String query = "id = "+ id;
+        ContentValues values = new ContentValues();
+
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
+        }
+
+        db.update("starship", values, query, null);
+
+    }
+
+    //Update data Starship in the database
     public void updateStarship(int id, boolean buy) {
 
         String[] key = { "buy" };
@@ -252,6 +289,19 @@ public class DatabaseAccess {
         for(int i = 0; i < key.length; i++) {
             values.put(key[i], value[i]);
         }
+
+        db.update("starship", values, query, null);
+
+    }
+
+    //Update data Starship in the database
+    public void updateStarship(int id, String nickname, boolean buy) {
+
+        String query = "id = "+ id;
+
+        ContentValues values = new ContentValues();
+        values.put("nickname", nickname);
+        values.put("buy", buy);
 
         db.update("starship", values, query, null);
 

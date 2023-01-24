@@ -4,15 +4,18 @@
     <item
         android:id="@+id/navigation_shop"
         android:icon="@drawable/ic_shop"
-        android:title="@string/title_shop" />
+        android:fontFamily="@font/quadrangle"
+        android:title="@string/title_shop"/>
     <item
         android:id="@+id/navigation_space"
         android:icon="@drawable/ic_space"
-        android:title="@string/title_space" />
+        android:fontFamily="@font/quadrangle"
+        android:title="@string/title_space"/>
 
     <item
         android:id="@+id/navigation_base"
         android:icon="@drawable/ic_planet"
-        android:title="@string/title_base" />
+        android:fontFamily="@font/quadrangle"
+        android:title="@string/title_base"/>
 
 </menu>

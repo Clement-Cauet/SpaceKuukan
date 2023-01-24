@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.spacekuukan.application.R;
 import com.spacekuukan.application.databinding.FragmentSpaceBinding;
 
 public class FragmentSpace extends Fragment {
@@ -18,9 +19,9 @@ public class FragmentSpace extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentSpaceBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View view = binding.getRoot();
 
-        return root;
+        return view;
     }
 
     @Override

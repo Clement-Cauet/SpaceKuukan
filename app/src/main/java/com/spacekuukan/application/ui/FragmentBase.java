@@ -15,20 +15,25 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 
 import com.spacekuukan.application.R;
 import com.spacekuukan.application.databinding.FragmentBaseBinding;
 import com.spacekuukan.application.db.DatabaseAccess;
 import com.spacekuukan.application.db.DatabaseThread;
 import com.spacekuukan.application.function.Base;
+import com.spacekuukan.application.function.InstanceFunction;
+import com.spacekuukan.application.function.ManageSystem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentBase extends Fragment {
 
     private Base base;
+    private InstanceFunction instanceFunction;
     private DatabaseAccess databaseAccess;
-    private DatabaseThread databaseThread;
+    private ManageSystem manageSystem;
 
     private FragmentBaseBinding binding;
 
@@ -41,8 +46,10 @@ public class FragmentBase extends Fragment {
         binding = FragmentBaseBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-        databaseAccess = DatabaseAccess.getInstance(getContext());
-        databaseThread = DatabaseThread.getInstance(databaseAccess, null, null);
+        this.instanceFunction = InstanceFunction.getInstance();
+        this.databaseAccess = DatabaseAccess.getInstance(getContext());
+        this.manageSystem = new ManageSystem(getContext());
+
 
         spinner     = view.findViewById(R.id.spinner_base_menu);
         base_page   = view.findViewById(R.id.base_page);
@@ -115,6 +122,7 @@ public class FragmentBase extends Fragment {
         title_text.setLayoutParams(params_title_text);
         title_text.setText(title);
         title_text.setTextSize(18);
+        title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         title_layout.addView(title_text);
 
         ImageView arrow_button = new ImageView(getContext());
@@ -175,6 +183,8 @@ public class FragmentBase extends Fragment {
         title_item.setOrientation(LinearLayout.HORIZONTAL);
         title_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         title_item.setPadding(30, 30, 30, 30);
+        title_item.setId((Integer.valueOf((String) starship.get(0))));
+        title_item.setWeightSum(8);
         base_item.addView(title_item);
 
         TextView title_text = new TextView(getContext());
@@ -183,12 +193,16 @@ public class FragmentBase extends Fragment {
         params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_title_text.gravity = Gravity.CENTER;
         title_text.setLayoutParams(params_title_text);
-        title_text.setText((CharSequence) starship.get(1));
+        if(starship.get(2) != null)
+            title_text.setText(starship.get(2).toString());
+        else
+            title_text.setText(starship.get(1).toString());
         title_text.setTextSize(14);
+        title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         title_item.addView(title_text);
 
         LinearLayout sell_text_layout = new LinearLayout(getContext());
-        sell_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+        sell_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2));
         title_item.addView(sell_text_layout);
 
         TextView sell_text = new TextView(getContext());
@@ -199,21 +213,26 @@ public class FragmentBase extends Fragment {
         sell_text.setLayoutParams(params_title_text);
         sell_text.setText(R.string.sell_button);
         sell_text.setTextSize(14);
+        sell_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         sell_text_layout.addView(sell_text);
+
+        title_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList manageSystemArgument = new ArrayList<>();
+                manageSystemArgument.add(title_item.getId());
+                manageSystemArgument.add(2);
+                manageSystemArgument.add(true);
+                instanceFunction.setManageSystemArgument(manageSystemArgument);
+                instanceFunction.getNavController().navigate(R.id.fragmentManageSystem);
+            }
+        });
 
         sell_text_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList selectPlanetData = databaseAccess.selectPlanetData(1);
-
-                int credit = Integer.valueOf((String) selectPlanetData.get(5)) + Integer.valueOf((String) starship.get(5)) / 2;
-                if(databaseAccess.selectCountStarship(true) > 1) {
-                    databaseAccess.updateCreditPlanet(1, credit);
-                    databaseThread.run();
-
-                    databaseAccess.updateStarship(Integer.valueOf((String) starship.get(0)) ,false);
+                if(manageSystem.sellStarship(starship))
                     base_item.setVisibility(View.GONE);
-                }
             }
         });
 

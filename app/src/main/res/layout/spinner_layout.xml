@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:width="130dp"
     android:height="30dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:fontFamily="@font/quadrangle">
 
 </TextView>

@@ -5,7 +5,16 @@
     <string name="title_space">Space</string>
     <string name="title_base">Base</string>
 
-    <string name="buy_button">Buy</string>
-    <string name="sell_button">Sell</string>
-    <string name="custom_button">Custom</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+
+    <string name="credit">CREDIT</string>
+    <string name="hydrogen">HYDROGEN</string>
+
+    <string name="return_button">RETURN</string>
+    <string name="buy_button">BUY</string>
+    <string name="sell_button">SELL</string>
+    <string name="custom_button">CUSTOM</string>
+
+    <string name="level_label">level</string>
 </resources>

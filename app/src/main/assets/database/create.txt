@@ -9,7 +9,7 @@ CREATE TABLE 'planet' (
 );
 
 INSERT INTO planet(name, latitude, longitude, credit, hydrogen) VALUES
-	('', 0, 0, 300, 100);
+	('', 0, 0, 1000, 100);
 
 CREATE TABLE 'spaceport' (
     'id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,12 +20,13 @@ CREATE TABLE 'spaceport' (
 CREATE TABLE 'starship' (
     'id' INTEGER PRIMARY KEY AUTOINCREMENT,
     'name' varchar(30) NOT NULL,
+    'nickname' varchar(30),
 	'type' int(11) NOT NULL,
     'level' int(11) DEFAULT 1 NOT NULL,
-    'speed' int(11) NOT NULL,
     'cost' int(11) NOT NULL,
     'power' int(11),
     'mining_rate' int(11),
+    'speed' int(11) NOT NULL,
     'latitude' int(11),
     'longitude' int(11),
     'buy' tinyint(1) DEFAULT false
