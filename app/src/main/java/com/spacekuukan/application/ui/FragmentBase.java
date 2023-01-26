@@ -80,8 +80,9 @@ public class FragmentBase extends Fragment {
 
     private void spacePortLayout() {
 
-    //createBaseLayout("Space Port");
+        base_page.removeAllViews();
 
+        createBaseSpaceportLayout("Space Port");
 
     }
 
@@ -91,12 +92,158 @@ public class FragmentBase extends Fragment {
 
         String[] title = {"", "Harvester", "Striker"};
         for(int i = 1; i < title.length; i++) {
-            createBaseLayout(i, title[i]);
+            createBaseStarshipLayout(i, title[i]);
         }
 
     }
 
-    private void createBaseLayout(int type, String title) {
+    private void createBaseSpaceportLayout(String title) {
+
+        LinearLayout base_layout = new LinearLayout(getContext());
+        base_layout.setOrientation(LinearLayout.VERTICAL);
+        base_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        base_layout.setBackgroundColor(base_layout.getResources().getColor(R.color.white));
+        LinearLayout.LayoutParams params_category_layout;
+        params_category_layout = (LinearLayout.LayoutParams) base_layout.getLayoutParams();
+        params_category_layout.setMargins(0, 0, 0, 50);
+        base_layout.setLayoutParams(params_category_layout);
+        base_page.addView(base_layout);
+
+        LinearLayout title_layout = new LinearLayout(getContext());
+        title_layout.setOrientation(LinearLayout.HORIZONTAL);
+        title_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        title_layout.setPadding(30, 30, 30, 30);
+        base_layout.addView(title_layout);
+
+        TextView title_text = new TextView(getContext());
+        title_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 5));
+        LinearLayout.LayoutParams params_title_text;
+        params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
+        params_title_text.gravity = Gravity.CENTER;
+        title_text.setLayoutParams(params_title_text);
+        title_text.setText(title);
+        title_text.setTextSize(18);
+        title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
+        title_layout.addView(title_text);
+
+        ImageView arrow_button = new ImageView(getContext());
+        arrow_button.setLayoutParams(new LinearLayout.LayoutParams(75, 75, 1));
+        arrow_button.setImageResource(R.drawable.ic_down_arrow);
+        title_layout.addView(arrow_button);
+
+        LinearLayout base_content = new LinearLayout(getContext());
+        base_content.setOrientation(LinearLayout.VERTICAL);
+        base_content.setPadding(10,0, 10, 0);
+        base_content.setBackgroundColor(base_content.getResources().getColor(R.color.white));
+        base_content.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        base_layout.addView(base_content);
+
+        ArrayList selectSpaceport = databaseAccess.selectSpaceport(true);
+        for(int item = 0; item < selectSpaceport.size(); item++) {
+            createBaseSpaceportItemLayout(base_content, selectSpaceport, item);
+        }
+
+        if(base_content.getChildCount() > 0) {
+            arrow_button.setRotation(0);
+            base_content.setVisibility(View.VISIBLE);
+        }else{
+            arrow_button.setRotation(90);
+            base_content.setVisibility(View.GONE);
+        }
+
+        arrow_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(base_content.getVisibility() == View.VISIBLE){
+                    arrow_button.animate().rotation(90).start();
+                    base_content.setVisibility(View.GONE);
+                }else{
+                    arrow_button.animate().rotation(0).start();
+                    base_content.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+    }
+
+    private void createBaseSpaceportItemLayout(LinearLayout base_content, ArrayList selectSpaceport, int item) {
+
+        ArrayList starship = (ArrayList) selectSpaceport.get(item);
+
+        LinearLayout base_item = new LinearLayout(getContext());
+        base_item.setOrientation(LinearLayout.VERTICAL);
+        base_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        base_item.setBackgroundColor(base_item.getResources().getColor(R.color.white));
+        LinearLayout.LayoutParams params_category_layout;
+        params_category_layout = (LinearLayout.LayoutParams) base_item.getLayoutParams();
+        params_category_layout.setMargins(0, 0, 0, 50);
+        base_item.setLayoutParams(params_category_layout);
+        base_content.addView(base_item);
+
+        LinearLayout title_item = new LinearLayout(getContext());
+        title_item.setOrientation(LinearLayout.HORIZONTAL);
+        title_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        title_item.setPadding(30, 30, 30, 30);
+        title_item.setId((Integer.valueOf((String) starship.get(0))));
+        title_item.setWeightSum(10);
+        base_item.addView(title_item);
+
+        LinearLayout title_text_layout = new LinearLayout(getContext());
+        title_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 8));
+        title_item.addView(title_text_layout);
+
+        TextView title_text = new TextView(getContext());
+        title_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams params_title_text;
+        params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
+        params_title_text.gravity = Gravity.CENTER;
+        title_text.setLayoutParams(params_title_text);
+        if(starship.get(2) != null)
+            title_text.setText(starship.get(2).toString());
+        else
+            title_text.setText(starship.get(1).toString());
+        title_text.setTextSize(14);
+        title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
+        title_text_layout.addView(title_text);
+
+        LinearLayout sell_text_layout = new LinearLayout(getContext());
+        sell_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2));
+        title_item.addView(sell_text_layout);
+
+        TextView sell_text = new TextView(getContext());
+        sell_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams params_sell_text;
+        params_sell_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
+        params_sell_text.gravity = Gravity.CENTER;
+        sell_text.setLayoutParams(params_title_text);
+        sell_text.setText(R.string.sell_button);
+        sell_text.setTextSize(14);
+        sell_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
+        sell_text_layout.addView(sell_text);
+
+        title_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList manageSystemArgument = new ArrayList<>();
+                manageSystemArgument.add(title_item.getId());
+                manageSystemArgument.add(1);
+                manageSystemArgument.add(true);
+                instanceFunction.setManageSystemArgument(manageSystemArgument);
+                instanceFunction.getNavController().navigate(R.id.fragmentManageSystem);
+            }
+        });
+
+        sell_text_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(manageSystem.sellStarship(starship))
+                    base_item.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    private void createBaseStarshipLayout(int type, String title) {
 
         LinearLayout base_layout = new LinearLayout(getContext());
         base_layout.setOrientation(LinearLayout.VERTICAL);
@@ -139,7 +286,7 @@ public class FragmentBase extends Fragment {
 
         ArrayList selectStarship = databaseAccess.selectStarship(type, true);
         for(int item = 0; item < selectStarship.size(); item++) {
-            createBaseItemLayout(base_content, selectStarship, item);
+            createBaseStarshipItemLayout(base_content, selectStarship, item);
         }
 
         if(base_content.getChildCount() > 0) {
@@ -165,7 +312,7 @@ public class FragmentBase extends Fragment {
 
     }
 
-    private void createBaseItemLayout(LinearLayout base_content, ArrayList selectStarship, int item) {
+    private void createBaseStarshipItemLayout(LinearLayout base_content, ArrayList selectStarship, int item) {
 
         ArrayList starship = (ArrayList) selectStarship.get(item);
 

@@ -16,5 +16,6 @@
     <string name="sell_button">SELL</string>
     <string name="custom_button">CUSTOM</string>
 
-    <string name="level_label">level</string>
+    <string name="level_label">Level</string>
+    <string name="station_label">Station</string>
 </resources>

@@ -13,39 +13,103 @@ public class ManageSystem {
     private DatabaseAccess databaseAccess;
     private DatabaseThread databaseThread;
 
+    private ArrayList selectPlanetData;
+
     public ManageSystem(Context context) {
+
         this.databaseAccess = DatabaseAccess.getInstance(context);
         this.databaseThread = DatabaseThread.getInstance(databaseAccess, null, null);
+
+        this.selectPlanetData = databaseAccess.selectPlanetData(1);
+
     }
 
-    public boolean buyStarship(ArrayList starship) {
+    public boolean buySpaceport(ArrayList selectSpaceportData) {
 
-        ArrayList selectPlanetData = databaseAccess.selectPlanetData(1);
+        int hydrogen = Integer.valueOf((String) selectPlanetData.get(6)) - Integer.valueOf((String) selectSpaceportData.get(4));
 
-        int credit = Integer.valueOf((String) selectPlanetData.get(5)) - Integer.valueOf((String) starship.get(5));
+        if(hydrogen >= 0) {
+
+            databaseAccess.updateCreditPlanet(1, Integer.valueOf((String) selectPlanetData.get(5)), hydrogen);
+            databaseThread.run();
+
+            databaseAccess.updateSpaceport(Integer.valueOf((String) selectSpaceportData.get(0)),null,true);
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    public boolean sellSpaceport(ArrayList selectSpaceportData) {
+
+        int hydrogen = Integer.valueOf((String) selectPlanetData.get(6)) + Integer.valueOf((String) selectSpaceportData.get(4)) / 2;
+
+        if(databaseAccess.selectCountSpaceport(true) > 1) {
+
+            databaseAccess.updateCreditPlanet(1, Integer.valueOf((String) selectPlanetData.get(5)), hydrogen);
+            databaseThread.run();
+
+            databaseAccess.updateSpaceport(Integer.valueOf((String) selectSpaceportData.get(0)),null,false);
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    public boolean upgradeSpaceport(ArrayList selectSpaceportData) {
+
+        int hydrogen = Integer.valueOf((String) selectPlanetData.get(6)) - (Integer.valueOf((String) selectSpaceportData.get(4)) / 2) * Integer.valueOf((String) selectSpaceportData.get(3));
+
+        if(hydrogen >= 0) {
+
+            databaseAccess.updateCreditPlanet(1, Integer.valueOf((String) selectPlanetData.get(5)), hydrogen);
+            databaseThread.run();
+
+            databaseAccess.updateSpaceport(Integer.valueOf((String) selectSpaceportData.get(0)), Integer.valueOf((String) selectSpaceportData.get(3)) + 1);
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    public boolean buyStarship(ArrayList selectStarshipData) {
+
+        int credit = Integer.valueOf((String) selectPlanetData.get(5)) - Integer.valueOf((String) selectStarshipData.get(5));
+
         if(credit >= 0) {
-            databaseAccess.updateCreditPlanet(1, credit);
+
+            databaseAccess.updateCreditPlanet(1, credit, Integer.valueOf((String) selectPlanetData.get(6)));
             databaseThread.run();
 
-            databaseAccess.updateStarship(Integer.valueOf((String) starship.get(0)), true);
+            databaseAccess.updateStarship(Integer.valueOf((String) selectStarshipData.get(0)),null, true);
 
             return true;
+
         }
 
         return false;
 
     }
 
-    public boolean sellStarship(ArrayList starship) {
+    public boolean sellStarship(ArrayList selectStarshipData) {
 
-        ArrayList selectPlanetData = databaseAccess.selectPlanetData(1);
+        int credit = Integer.valueOf((String) selectPlanetData.get(5)) + Integer.valueOf((String) selectStarshipData.get(5)) / 2;
 
-        int credit = Integer.valueOf((String) selectPlanetData.get(5)) + Integer.valueOf((String) starship.get(5)) / 2;
         if(databaseAccess.selectCountStarship(true) > 1) {
-            databaseAccess.updateCreditPlanet(1, credit);
+
+            databaseAccess.updateCreditPlanet(1, credit, Integer.valueOf((String) selectPlanetData.get(6)));
             databaseThread.run();
 
-            databaseAccess.updateStarship(Integer.valueOf((String) starship.get(0)) ,null,false);
+            databaseAccess.updateStarship(Integer.valueOf((String) selectStarshipData.get(0)),null,false);
 
             return true;
 
@@ -55,7 +119,23 @@ public class ManageSystem {
 
     }
 
-    public void customStarship() {
+    public boolean upgradeStarship(ArrayList selectStarshipData) {
+
+        int credit = Integer.valueOf((String) selectPlanetData.get(5)) - (Integer.valueOf((String) selectStarshipData.get(5)) / 2) * Integer.valueOf((String) selectStarshipData.get(4));
+
+        if(credit >= 0) {
+
+            databaseAccess.updateCreditPlanet(1, credit, Integer.valueOf((String) selectStarshipData.get(6)));
+            databaseThread.run();
+
+            databaseAccess.updateStarship(Integer.valueOf((String) selectStarshipData.get(0)), Integer.valueOf((String) selectStarshipData.get(4)) + 1);
+
+            return true;
+
+        }
+
+        return false;
 
     }
+
 }

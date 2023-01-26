@@ -38,7 +38,7 @@ public class FragmentManageSystem extends Fragment {
 
     private FragmentManageSystemBinding binding;
 
-    private LinearLayout manage_layout;
+    private LinearLayout manage_layout, menu_manage_layout;
 
     private static final int SPACEPORT = 1, STARSHIP = 2;
     private int id, category;
@@ -64,18 +64,77 @@ public class FragmentManageSystem extends Fragment {
 
         ArrayList selectPlanetData = databaseAccess.selectPlanetData(1);
         ArrayList selectStarshipData = databaseAccess.selectStarshipData(id);
+        ArrayList selectSpaceportData = databaseAccess.selectSpaceportData(id);
 
-        createMenuManageLayout(selectPlanetData, selectStarshipData);
+        createMenuManageLayout();
 
         switch (category) {
+
             case SPACEPORT:
-                manageSpaceport(selectStarshipData);
+
+                manageSpaceport(selectSpaceportData);
+
+                if(manage) {
+
+                    createLevelSpaceportLayout(selectSpaceportData);
+                    createStationSpaceportLayout(selectSpaceportData);
+
+                    Button sell_button = createSellButton();
+                    sell_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(manageSystem.sellSpaceport(selectSpaceportData))
+                                instanceFunction.getNavController().popBackStack();
+                        }
+                    });
+
+                } else {
+
+                    Button buy_button = createBuyButton();
+                    buy_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(manageSystem.buySpaceport(selectSpaceportData))
+                                instanceFunction.getNavController().popBackStack();
+                        }
+                    });
+
+                }
+
                 break;
+
             case STARSHIP:
+
                 manageStarship(selectStarshipData);
-                if(manage)
-                    createLevelLayout(selectPlanetData, selectStarshipData);
+
+                if(manage) {
+
+                    createLevelStarshipLayout(selectStarshipData);
+
+                    Button sell_button = createSellButton();
+                    sell_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(manageSystem.sellStarship(selectStarshipData))
+                                instanceFunction.getNavController().popBackStack();
+                        }
+                    });
+
+                } else {
+
+                    Button buy_button = createBuyButton();
+                    buy_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(manageSystem.buyStarship(selectStarshipData))
+                                instanceFunction.getNavController().popBackStack();
+                        }
+                    });
+
+                }
+
                 break;
+
         }
 
         return view;
@@ -87,19 +146,14 @@ public class FragmentManageSystem extends Fragment {
     }
 
     //Creation Menu Manage layout
-    protected void createMenuManageLayout(ArrayList selectPlanetData, ArrayList selectStarshipData) {
+    protected void createMenuManageLayout() {
 
-        LinearLayout menu_manage_layout = new LinearLayout(getContext());
+        menu_manage_layout = new LinearLayout(getContext());
         menu_manage_layout.setOrientation(LinearLayout.HORIZONTAL);
         menu_manage_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         manage_layout.addView(menu_manage_layout);
 
         createReturnButton(menu_manage_layout);
-
-        if(manage)
-            createSellButton(menu_manage_layout, selectStarshipData);
-        else
-            createBuyButton(menu_manage_layout, selectStarshipData);
 
     }
 
@@ -122,7 +176,7 @@ public class FragmentManageSystem extends Fragment {
     }
 
     //Creation Add button
-    protected void createBuyButton(LinearLayout menu_manage_layout, ArrayList selectStarshipData) {
+    protected Button createBuyButton() {
 
         Button buy_button = new Button(getContext());
         buy_button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,50));
@@ -131,19 +185,12 @@ public class FragmentManageSystem extends Fragment {
         buy_button.setText(buy_button.getResources().getString(R.string.buy_button));
         menu_manage_layout.addView(buy_button);
 
-        //Extract values to add in the database
-        buy_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //addTask();
-                instanceFunction.getNavController().popBackStack();
-            }
-        });
+        return buy_button;
 
     }
 
     //Creation Delete button
-    protected void createSellButton(LinearLayout menu_manage_layout, ArrayList selectStarshipData) {
+    protected Button createSellButton() {
 
         Button sell_button = new Button(getContext());
         sell_button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 50));
@@ -152,18 +199,44 @@ public class FragmentManageSystem extends Fragment {
         sell_button.setText(sell_button.getResources().getString(R.string.sell_button));
         menu_manage_layout.addView(sell_button);
 
-        //Display a confirmation popup to delete in the database
-        sell_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(manageSystem.sellStarship(selectStarshipData))
-                    instanceFunction.getNavController().popBackStack();
-            }
-        });
+        return sell_button;
 
     }
 
-    private void manageSpaceport(ArrayList selectStarshipData) {
+    private void manageSpaceport(ArrayList selectSpaceportData) {
+
+        LinearLayout nickname_layout = new LinearLayout(getContext());
+        nickname_layout.setOrientation(LinearLayout.HORIZONTAL);
+        nickname_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        manage_layout.addView(nickname_layout);
+
+        if(manage) {
+            EditText nickname_edit = new EditText(getContext());
+            nickname_edit.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            nickname_edit.setPadding(10, 10, 10, 10);
+            nickname_edit.setSingleLine();
+            if(selectSpaceportData.get(2) != null)
+                nickname_edit.setText(selectSpaceportData.get(2).toString());
+            else
+                nickname_edit.setHint(selectSpaceportData.get(1).toString());
+            nickname_edit.setTextSize(14);
+            nickname_edit.setTypeface(nickname_edit.getResources().getFont(R.font.quadrangle));
+            nickname_layout.addView(nickname_edit);
+
+            nickname_edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(!hasFocus && nickname_edit.getText().toString().trim().length() > 0) {
+                        databaseAccess.updateSpaceport(Integer.valueOf((String) selectSpaceportData.get(0)), nickname_edit.getText().toString());
+                    }
+                }
+            });
+        } else {
+            TextView nickname_text = new TextView(getContext());
+            nickname_text.setText(selectSpaceportData.get(1).toString());
+            nickname_text.setTypeface(nickname_text.getResources().getFont(R.font.quadrangle));
+            nickname_layout.addView(nickname_text);
+        }
 
     }
 
@@ -174,17 +247,33 @@ public class FragmentManageSystem extends Fragment {
         nickname_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         manage_layout.addView(nickname_layout);
 
-        EditText nickname_edit = new EditText(getContext());
-        nickname_edit.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        nickname_edit.setPadding(10, 10, 10, 10);
-        nickname_edit.setSingleLine();
-        if(selectStarshipData.get(2) != null)
-            nickname_edit.setText(selectStarshipData.get(2).toString());
-        else
-            nickname_edit.setHint(selectStarshipData.get(1).toString());
-        nickname_edit.setTextSize(14);
-        nickname_edit.setTypeface(nickname_edit.getResources().getFont(R.font.quadrangle));
-        nickname_layout.addView(nickname_edit);
+        if(manage) {
+            EditText nickname_edit = new EditText(getContext());
+            nickname_edit.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            nickname_edit.setPadding(10, 10, 10, 10);
+            nickname_edit.setSingleLine();
+            if(selectStarshipData.get(2) != null)
+                nickname_edit.setText(selectStarshipData.get(2).toString());
+            else
+                nickname_edit.setHint(selectStarshipData.get(1).toString());
+            nickname_edit.setTextSize(14);
+            nickname_edit.setTypeface(nickname_edit.getResources().getFont(R.font.quadrangle));
+            nickname_layout.addView(nickname_edit);
+
+            nickname_edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(!hasFocus && nickname_edit.getText().toString().trim().length() > 0) {
+                        databaseAccess.updateStarship(Integer.valueOf((String) selectStarshipData.get(0)), nickname_edit.getText().toString());
+                    }
+                }
+            });
+        } else {
+            TextView nickname_text = new TextView(getContext());
+            nickname_text.setText(selectStarshipData.get(1).toString());
+            nickname_text.setTypeface(nickname_text.getResources().getFont(R.font.quadrangle));
+            nickname_layout.addView(nickname_text);
+        }
 
         TableLayout stat_table = new TableLayout(getContext());
         stat_table.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -210,18 +299,9 @@ public class FragmentManageSystem extends Fragment {
             stat_row.addView(stat_value);
         }
 
-        nickname_edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    databaseAccess.updateStarship(Integer.valueOf((String) selectStarshipData.get(0)), nickname_edit.getText().toString());
-                }
-            }
-        });
-
     }
 
-    private void createLevelLayout(ArrayList selectPlanetData, ArrayList selectStarshipData) {
+    private void createLevelStarshipLayout(ArrayList selectStarshipData) {
 
         LinearLayout level_layout = new LinearLayout(getContext());
         level_layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -242,24 +322,100 @@ public class FragmentManageSystem extends Fragment {
         level_edit.setTypeface(level_edit.getResources().getFont(R.font.quadrangle));
         level_layout.addView(level_edit);
 
-        ImageButton level_button = new ImageButton(getContext());
-        level_edit.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        ImageView level_button = new ImageView(getContext());
+        level_edit.setLayoutParams(new LinearLayout.LayoutParams(75, 75));
         level_button.setImageResource(R.drawable.ic_add_button);
         level_layout.addView(level_button);
 
         level_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int credit = Integer.valueOf((String) selectPlanetData.get(5)) - (Integer.valueOf((String) selectStarshipData.get(5)) / 2) * Integer.valueOf((String) selectStarshipData.get(4));
-                if(credit >= 0) {
-                    databaseAccess.updateCreditPlanet(1, credit);
-                    databaseAccess.updateStarship(Integer.valueOf((String) selectStarshipData.get(0)), Integer.valueOf((String) selectStarshipData.get(4)) + 1);
-                    databaseThread.run();
 
+                manageSystem.upgradeStarship(selectStarshipData);
 
-                }
             }
         });
+
+    }
+
+    private void createLevelSpaceportLayout(ArrayList selectSpaceportData) {
+
+        LinearLayout level_layout = new LinearLayout(getContext());
+        level_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        level_layout.setOrientation(LinearLayout.HORIZONTAL);
+        manage_layout.addView(level_layout);
+
+        TextView level_text = new TextView(getContext());
+        level_text.setText(level_text.getResources().getString(R.string.level_label));
+        level_text.setTypeface(level_text.getResources().getFont(R.font.quadrangle));
+        level_layout.addView(level_text);
+
+        EditText level_edit = new EditText(getContext());
+        level_edit.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        level_edit.setPadding(10, 10, 10, 10);
+        level_edit.setEnabled(false);
+        level_edit.setText(selectSpaceportData.get(3).toString());
+        level_edit.setTextSize(14);
+        level_edit.setTypeface(level_edit.getResources().getFont(R.font.quadrangle));
+        level_layout.addView(level_edit);
+
+        ImageView level_button = new ImageView(getContext());
+        level_button.setLayoutParams(new LinearLayout.LayoutParams(75, 75));
+        level_button.setImageResource(R.drawable.ic_add_button);
+        level_layout.addView(level_button);
+
+        level_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                manageSystem.upgradeSpaceport(selectSpaceportData);
+
+            }
+        });
+
+    }
+
+    private void createStationSpaceportLayout(ArrayList selectSpaceportData) {
+
+        LinearLayout station_layout = new LinearLayout(getContext());
+        station_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        station_layout.setOrientation(LinearLayout.HORIZONTAL);
+        manage_layout.addView(station_layout);
+
+        LinearLayout station_title_layout = new LinearLayout(getContext());
+        station_title_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        station_title_layout.setOrientation(LinearLayout.HORIZONTAL);
+        station_layout.addView(station_title_layout);
+
+        TextView station_title_text = new TextView(getContext());
+        station_title_text.setTypeface(station_title_text.getResources().getFont(R.font.quadrangle));
+        station_title_text.setTextSize(14);
+        station_title_text.setText(R.string.station_label);
+        station_title_layout.addView(station_title_text);
+
+        TextView station_title_value = new TextView(getContext());
+        station_title_value.setTypeface(station_title_value.getResources().getFont(R.font.quadrangle));
+        station_title_value.setTextSize(14);
+        station_title_value.setText(databaseAccess.selectCountStation(id) + "/" + selectSpaceportData.get(3));
+        station_title_layout.addView(station_title_value);
+
+        ArrayList selectStarshipStation = databaseAccess.selectStarshipStation(id);
+        for(int item = 0; item < selectStarshipStation.size(); item++) {
+
+             ArrayList station = (ArrayList) selectStarshipStation.get(item);
+
+            LinearLayout station_item_layout = new LinearLayout(getContext());
+            station_item_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            station_item_layout.setOrientation(LinearLayout.HORIZONTAL);
+            station_layout.addView(station_item_layout);
+
+            TextView station_item_text = new TextView(getContext());
+            station_item_text.setTypeface(station_item_text.getResources().getFont(R.font.quadrangle));
+            station_item_text.setTextSize(14);
+            station_item_text.setText((CharSequence) station.get(1));
+            station_item_layout.addView(station_item_text);
+
+        }
 
     }
 
