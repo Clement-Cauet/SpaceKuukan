@@ -2,6 +2,9 @@ package com.spacekuukan.application.function;
 
 import androidx.navigation.NavController;
 
+import com.spacekuukan.application.R;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class InstanceFunction {
@@ -11,8 +14,9 @@ public class InstanceFunction {
     public NavController navController;
 
     public List<Integer> manageSystemArgument;
-    public List<Starship> starshipList;
-    public List<SpacePort> spacePortList;
+    public ArrayList<Starship> starshipList;
+    public ArrayList<Spaceport> spaceportList;
+    public ArrayList<Planet> planetList;
 
     public static synchronized InstanceFunction getInstance() {
         if (instanceFunction == null)
@@ -38,6 +42,26 @@ public class InstanceFunction {
 
     public List getManageSystemArgument() {
         return manageSystemArgument;
+    }
+
+    public void setPlanetList(ArrayList planetList) {
+        this.planetList = planetList;
+    }
+
+    public ArrayList getPlanetList() { return planetList; }
+
+    public void setStarshipList(ArrayList starshipList) {
+        this.starshipList = starshipList;
+    }
+
+    public ArrayList getStarshipList() { return starshipList; }
+
+    public void setSpaceportList(ArrayList spaceportList) {
+        this.spaceportList = spaceportList;
+    }
+
+    public ArrayList getSpaceportList() {
+        return spaceportList;
     }
 
 }

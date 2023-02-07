@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,7 +19,9 @@ import androidx.fragment.app.Fragment;
 import com.spacekuukan.application.R;
 import com.spacekuukan.application.databinding.FragmentShopBinding;
 import com.spacekuukan.application.db.DatabaseAccess;
-import com.spacekuukan.application.db.DatabaseThread;
+import com.spacekuukan.application.function.Spaceport;
+import com.spacekuukan.application.function.Starship;
+import com.spacekuukan.application.thread.DatabaseThread;
 import com.spacekuukan.application.function.InstanceFunction;
 import com.spacekuukan.application.function.ManageSystem;
 
@@ -30,6 +33,9 @@ public class FragmentShop extends Fragment {
     private DatabaseAccess databaseAccess;
     private DatabaseThread databaseThread;
     private ManageSystem manageSystem;
+
+    private Spaceport spaceport;
+    private Starship starship;
 
     private FragmentShopBinding binding;
 
@@ -90,19 +96,15 @@ public class FragmentShop extends Fragment {
 
         shop_page.removeAllViews();
 
-        String[] title = {"", "Harvester", "Striker"};
-        for(int i = 1; i < title.length; i++) {
-            createShopStarshipLayout(i, title[i]);
-        }
+        createShopStarshipLayout("Spaceship");
 
     }
 
     private void createShopSpaceportLayout(String title) {
 
         LinearLayout shop_layout = new LinearLayout(getContext());
-        shop_layout.setOrientation(LinearLayout.VERTICAL);
         shop_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        shop_layout.setBackgroundColor(shop_layout.getResources().getColor(R.color.white));
+        shop_layout.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) shop_layout.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -134,13 +136,15 @@ public class FragmentShop extends Fragment {
         LinearLayout base_content = new LinearLayout(getContext());
         base_content.setOrientation(LinearLayout.VERTICAL);
         base_content.setPadding(10,0, 10, 0);
-        base_content.setBackgroundColor(base_content.getResources().getColor(R.color.white));
         base_content.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         shop_layout.addView(base_content);
 
-        ArrayList selectSpaceport = databaseAccess.selectSpaceport(false);
-        for(int item = 0; item < selectSpaceport.size(); item++) {
-            createShopSpaceportItemLayout(base_content, selectSpaceport, item);
+        ArrayList spaceportList = instanceFunction.getSpaceportList();
+        for (int i = 0; i < spaceportList.size(); i++) {
+            spaceport = (Spaceport) spaceportList.get(i);
+            if (spaceport.getBuy() == 0) {
+                createShopSpaceportItemLayout(base_content);
+            }
         }
 
         if(base_content.getChildCount() > 0) {
@@ -166,14 +170,11 @@ public class FragmentShop extends Fragment {
 
     }
 
-    private void createShopSpaceportItemLayout(LinearLayout base_content, ArrayList selectSpaceport, int item) {
-
-        ArrayList spaceport = (ArrayList) selectSpaceport.get(item);
+    private void createShopSpaceportItemLayout(LinearLayout base_content) {
 
         LinearLayout shop_item = new LinearLayout(getContext());
         shop_item.setOrientation(LinearLayout.VERTICAL);
         shop_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        shop_item.setBackgroundColor(shop_item.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) shop_item.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -184,7 +185,7 @@ public class FragmentShop extends Fragment {
         title_item.setOrientation(LinearLayout.HORIZONTAL);
         title_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         title_item.setPadding(30, 30, 30, 30);
-        title_item.setId((Integer.valueOf((String) spaceport.get(0))));
+        title_item.setId(spaceport.getId());
         title_item.setWeightSum(10);
         shop_item.addView(title_item);
 
@@ -198,8 +199,8 @@ public class FragmentShop extends Fragment {
         params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_title_text.gravity = Gravity.CENTER;
         title_text.setLayoutParams(params_title_text);
-        title_text.setText((CharSequence) spaceport.get(1));
-        title_text.setTextSize(14);
+        title_text.setText(spaceport.getName());
+        title_text.setTextSize(12);
         title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         title_text_layout.addView(title_text);
 
@@ -207,14 +208,19 @@ public class FragmentShop extends Fragment {
         cost_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 3));
         title_item.addView(cost_text_layout);
 
+        ImageView cost_image = new ImageView(getContext());
+        cost_image.setLayoutParams(new LinearLayout.LayoutParams(60, 60));
+        cost_image.setImageResource(R.mipmap.hydrogen);
+        cost_text_layout.addView(cost_image);
+
         TextView cost_text = new TextView(getContext());
         title_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         LinearLayout.LayoutParams params_cost_text;
         params_cost_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_cost_text.gravity = Gravity.CENTER;
         cost_text.setLayoutParams(params_title_text);
-        cost_text.setText((CharSequence) spaceport.get(4) + " H");
-        cost_text.setTextSize(14);
+        cost_text.setText(String.valueOf(spaceport.getCost()));
+        cost_text.setTextSize(12);
         cost_text.setTypeface(cost_text.getResources().getFont(R.font.quadrangle));
         cost_text_layout.addView(cost_text);
 
@@ -229,7 +235,7 @@ public class FragmentShop extends Fragment {
         params_buy_text.gravity = Gravity.CENTER;
         buy_text.setLayoutParams(params_title_text);
         buy_text.setText(R.string.buy_button);
-        buy_text.setTextSize(14);
+        buy_text.setTextSize(12);
         buy_text.setTypeface(buy_text.getResources().getFont(R.font.quadrangle));
         buy_text_layout.addView(buy_text);
 
@@ -248,19 +254,23 @@ public class FragmentShop extends Fragment {
         buy_text_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(manageSystem.buySpaceport(spaceport))
+                spaceport = (Spaceport) instanceFunction.getSpaceportList().get(Integer.valueOf(title_item.getId()) - 1);
+                if(manageSystem.buySpaceport(title_item.getId())) {
                     shop_item.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), spaceport.getName() + " hase been purchased", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), spaceport.getName() + " is too expansive", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
 
-    private void createShopStarshipLayout(int type, String title) {
+    private void createShopStarshipLayout(String title) {
 
         LinearLayout shop_layout = new LinearLayout(getContext());
         shop_layout.setOrientation(LinearLayout.VERTICAL);
         shop_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        shop_layout.setBackgroundColor(shop_layout.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) shop_layout.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -292,13 +302,15 @@ public class FragmentShop extends Fragment {
         LinearLayout base_content = new LinearLayout(getContext());
         base_content.setOrientation(LinearLayout.VERTICAL);
         base_content.setPadding(10,0, 10, 0);
-        base_content.setBackgroundColor(base_content.getResources().getColor(R.color.white));
         base_content.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         shop_layout.addView(base_content);
 
-        ArrayList selectStarship = databaseAccess.selectStarship(type, false);
-        for(int item = 0; item < selectStarship.size(); item++) {
-            createShopStarshipItemLayout(base_content, selectStarship, item);
+        ArrayList starshipList = instanceFunction.getStarshipList();
+        for (int i = 0; i < starshipList.size(); i++) {
+            starship = (Starship) starshipList.get(i);
+            if (starship.getBuy() == 0) {
+                createShopStarshipItemLayout(base_content);
+            }
         }
 
         if(base_content.getChildCount() > 0) {
@@ -324,14 +336,11 @@ public class FragmentShop extends Fragment {
 
     }
 
-    private void createShopStarshipItemLayout(LinearLayout base_content, ArrayList selectStarship, int item) {
-
-        ArrayList starship = (ArrayList) selectStarship.get(item);
+    private void createShopStarshipItemLayout(LinearLayout base_content) {
 
         LinearLayout shop_item = new LinearLayout(getContext());
         shop_item.setOrientation(LinearLayout.VERTICAL);
         shop_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        shop_item.setBackgroundColor(shop_item.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) shop_item.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -342,7 +351,7 @@ public class FragmentShop extends Fragment {
         title_item.setOrientation(LinearLayout.HORIZONTAL);
         title_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         title_item.setPadding(30, 30, 30, 30);
-        title_item.setId((Integer.valueOf((String) starship.get(0))));
+        title_item.setId(starship.getId());
         title_item.setWeightSum(10);
         shop_item.addView(title_item);
 
@@ -350,13 +359,18 @@ public class FragmentShop extends Fragment {
         title_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 5));
         title_item.addView(title_text_layout);
 
+        ImageView starship_image = new ImageView(getContext());
+        starship_image.setLayoutParams(new LinearLayout.LayoutParams(60, 60));
+        starship_image.setImageResource(starship.getImageStarshipId()[starship.getId() - 1]);
+        title_text_layout.addView(starship_image);
+
         TextView title_text = new TextView(getContext());
         title_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         LinearLayout.LayoutParams params_title_text;
         params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_title_text.gravity = Gravity.CENTER;
         title_text.setLayoutParams(params_title_text);
-        title_text.setText((CharSequence) starship.get(1));
+        title_text.setText(starship.getName());
         title_text.setTextSize(12);
         title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         title_text_layout.addView(title_text);
@@ -365,13 +379,18 @@ public class FragmentShop extends Fragment {
         cost_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 3));
         title_item.addView(cost_text_layout);
 
+        ImageView cost_image = new ImageView(getContext());
+        cost_image.setLayoutParams(new LinearLayout.LayoutParams(60, 60));
+        cost_image.setImageResource(R.mipmap.credit);
+        cost_text_layout.addView(cost_image);
+
         TextView cost_text = new TextView(getContext());
         title_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         LinearLayout.LayoutParams params_cost_text;
         params_cost_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_cost_text.gravity = Gravity.CENTER;
         cost_text.setLayoutParams(params_title_text);
-        cost_text.setText((CharSequence) starship.get(5) + " $");
+        cost_text.setText(String.valueOf(starship.getCost()));
         cost_text.setTextSize(12);
         cost_text.setTypeface(cost_text.getResources().getFont(R.font.quadrangle));
         cost_text_layout.addView(cost_text);
@@ -406,10 +425,35 @@ public class FragmentShop extends Fragment {
         buy_text_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(manageSystem.buyStarship(starship))
-                    shop_item.setVisibility(View.GONE);
+                ArrayList spaceportList = instanceFunction.getSpaceportList();
+                Toast toast = null;
+                boolean init = false;
+                for (int i = 0; i < spaceportList.size(); i++) {
+
+                    Spaceport spaceport = (Spaceport) spaceportList.get(i);
+
+                    if(spaceport.verifyStation()) {
+                        starship = (Starship) instanceFunction.getStarshipList().get(Integer.valueOf(title_item.getId()) - 1);
+                        if(manageSystem.buyStarship(title_item.getId(), spaceport.getId())) {
+                            spaceport.getStarshipStation().add(starship);
+                            shop_item.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), starship.getName() + " hase been purchased", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), starship.getName() + " is too expansive", Toast.LENGTH_SHORT).show();
+                        }
+                        init = true;
+                        break;
+                    } else {
+                        if (toast == null && !init && i + 1 == spaceportList.size()) {
+                            toast = new Toast(getContext());
+                            toast.makeText(getContext(), "All spaceport are full", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
             }
         });
 
     }
+
 }

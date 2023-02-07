@@ -1,7 +1,6 @@
 CREATE TABLE 'planet' (
     'id' INTEGER PRIMARY KEY AUTOINCREMENT,
     'name' varchar(30) NOT NULL,
-    'power' int(11),
     'latitude' int(11),
     'longitude' int(11),
     'credit' int(11),
@@ -9,7 +8,14 @@ CREATE TABLE 'planet' (
 );
 
 INSERT INTO planet(name, latitude, longitude, credit, hydrogen) VALUES
-	('', 0, 0, 1000, 1000);
+	('Base', 200, 500, 100, 50),
+	('Newtonnir', 300, 200, 300, 100),
+	('Kirmouane', 100, 700, 100, 300),
+	('Calpian', 800, 100, 250, 250),
+	('Karmord', 1000, 600, 300, 200),
+	('Zarbian', 800, 900, 200, 300),
+	('Voromir', 1300, 800, 500, 250),
+	('Yormoss', 1500, 400, 250, 500);
 
 CREATE TABLE 'spaceport' (
     'id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,35 +27,33 @@ CREATE TABLE 'spaceport' (
 );
 
 INSERT INTO spaceport(name, cost, buy) VALUES
-	('spaceport1', 100, 1),
-	('spaceport2', 500, 0),
-	('spaceport3', 1000, 0),
-	('spaceport4', 3000, 0),
-	('spaceport5', 10000, 0);
+	('Spaceport n°1', 100, 1),
+	('Spaceport n°2', 500, 0),
+	('Spaceport n°3', 1000, 0),
+	('Spaceport n°4', 3000, 0),
+	('Spaceport n°5', 10000, 0);
 
 CREATE TABLE 'starship' (
     'id' INTEGER PRIMARY KEY AUTOINCREMENT,
     'name' varchar(30) NOT NULL,
     'nickname' varchar(30),
-	'type' int(11) NOT NULL,
     'level' int(11) DEFAULT 1 NOT NULL,
     'cost' int(11) NOT NULL,
-    'power' int(11),
     'mining_rate' int(11),
     'speed' int(11) NOT NULL,
-    'latitude' int(11),
-    'longitude' int(11),
     'buy' tinyint(1),
+    'planet' int(11),
     'port' int(11),
+    FOREIGN KEY ('planet') REFERENCES 'planet'('id'),
     FOREIGN KEY ('port') REFERENCES 'spaceport'('id')
 );
 
-INSERT INTO starship(name, type, speed, cost, power, mining_rate, buy) VALUES
-	('starship1', 1, 5, 100, 10, 0, 1),
-	('starship2', 2, 5, 100, 0, 10, 0),
-	('starship3', 2, 15, 300, 20, 0, 0),
-	('starship4', 1, 35, 300, 15, 0, 0),
-	('starship5', 1, 10, 300, 5, 5, 0),
-	('starship6', 1, 20, 300, 5, 0, 0),
-	('starship7', 2, 30, 1000, 20, 0, 0),
-	('starship8', 1, 50, 1000, 0, 30, 0);
+INSERT INTO starship(name, speed, cost, mining_rate, buy, planet, port) VALUES
+	('Pargon', 4, 100, 1, 1, 1, 1),
+	('Starmenger', 2, 100, 2, 0, -1, -1),
+	('Silonia', 10, 300, 5, 0, -1, -1),
+	('Cameberia', 5, 300, 10, 0, -1, -1),
+	('Milenium', 14, 300, 1, 0, -1, -1),
+	('Miolniir', 1, 300, 14, 0, -1, -1),
+	('Laggan', 20, 1000, 25, 0, -1, -1),
+	('Xx-D3tr0y-xX', 10, 1000, 35, 0, -1, -1);

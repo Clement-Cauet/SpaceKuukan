@@ -51,7 +51,7 @@ public class DatabaseAccess {
 
         while(cursor.moveToNext()) {
             ArrayList<String> list = new ArrayList<>();
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < cursor.getColumnCount(); i++){
                 list.add(cursor.getString(i));
             }
             result.add(list);
@@ -71,7 +71,7 @@ public class DatabaseAccess {
         ArrayList<String> result = new ArrayList<>();
 
         while(cursor.moveToNext()) {
-            for(int i = 0; i < 7; i++){
+            for(int i = 0; i < cursor.getColumnCount(); i++){
                 result.add(cursor.getString(i));
             }
         }
@@ -147,6 +147,27 @@ public class DatabaseAccess {
     }
 
     //Select the list of Spaceport in database
+    public ArrayList selectSpaceport() {
+
+        String query = "select * from spaceport";
+
+        cursor = db.rawQuery(query, new String[]{});
+
+        ArrayList<ArrayList> result = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            ArrayList<String> list = new ArrayList<>();
+            for(int i = 0; i < cursor.getColumnCount(); i++){
+                list.add(cursor.getString(i));
+            }
+            result.add(list);
+        }
+
+        return result;
+
+    }
+
+    //Select the list of Spaceport in database
     public ArrayList selectSpaceport(boolean buy) {
 
         String query = "select * from spaceport where buy = " + buy;
@@ -189,7 +210,7 @@ public class DatabaseAccess {
         ArrayList<String> result = new ArrayList<>();
 
         while(cursor.moveToNext()) {
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < cursor.getColumnCount(); i++){
                 result.add(cursor.getString(i));
             }
         }
@@ -256,12 +277,13 @@ public class DatabaseAccess {
     }
 
     //Update data Starship in the database
-    public void updateSpaceport(int id, String nickname, boolean buy) {
+    public void updateSpaceport(int id, String nickname, int level, boolean buy) {
 
         String query = "id = "+ id;
 
         ContentValues values = new ContentValues();
         values.put("nickname", nickname);
+        values.put("level", level);
         values.put("buy", buy);
 
         db.update("spaceport", values, query, null);
@@ -306,7 +328,7 @@ public class DatabaseAccess {
 
         while(cursor.moveToNext()) {
             ArrayList<String> list = new ArrayList<>();
-            for(int i = 0; i < 13; i++){
+            for(int i = 0; i < cursor.getColumnCount(); i++){
                 list.add(cursor.getString(i));
             }
             result.add(list);
@@ -317,9 +339,9 @@ public class DatabaseAccess {
     }
 
     //Select the list of Shop Starship in database
-    public ArrayList selectStarship(int type, boolean buy) {
+    public ArrayList selectStarship(boolean buy) {
 
-        String query = "select * from starship where type = " + type + " and buy = " + buy;
+        String query = "select * from starship where buy = " + buy;
 
         cursor = db.rawQuery(query, new String[]{});
 
@@ -327,7 +349,28 @@ public class DatabaseAccess {
 
         while(cursor.moveToNext()) {
             ArrayList<String> list = new ArrayList<>();
-            for(int i = 0; i < 13; i++){
+            for(int i = 0; i < cursor.getColumnCount(); i++){
+                list.add(cursor.getString(i));
+            }
+            result.add(list);
+        }
+
+        return result;
+
+    }
+
+    //Select the list of Shop Starship in database
+    public ArrayList selectStarship(boolean buy, int planet) {
+
+        String query = "select * from starship where buy = " + buy + " and planet = " + planet;
+
+        cursor = db.rawQuery(query, new String[]{});
+
+        ArrayList<ArrayList> result = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            ArrayList<String> list = new ArrayList<>();
+            for(int i = 0; i < cursor.getColumnCount(); i++){
                 list.add(cursor.getString(i));
             }
             result.add(list);
@@ -359,7 +402,7 @@ public class DatabaseAccess {
         ArrayList<String> result = new ArrayList<>();
 
         if(cursor.moveToNext()) {
-            for(int i = 0; i < 13; i++) {
+            for(int i = 0; i < cursor.getColumnCount(); i++) {
                 result.add(cursor.getString(i));
             }
         }
@@ -390,7 +433,7 @@ public class DatabaseAccess {
     }
 
     //Update data Starship in the database
-    public void updateStarship(int id, String nickname) {
+    public void updateStarshipNickname(int id, String nickname) {
 
         String[] key = { "nickname" };
 
@@ -408,7 +451,7 @@ public class DatabaseAccess {
     }
 
     //Update data Starship in the database
-    public void updateStarship(int id, int level) {
+    public void updateStarshipLevel(int id, int level) {
 
         String[] key = { "level" };
 
@@ -426,13 +469,50 @@ public class DatabaseAccess {
     }
 
     //Update data Starship in the database
-    public void updateStarship(int id, String nickname, boolean buy) {
+    public void updateStarshipBuy(int id, String nickname, int level, boolean buy, int planet, int port) {
 
         String query = "id = "+ id;
 
         ContentValues values = new ContentValues();
         values.put("nickname", nickname);
+        values.put("level", level);
         values.put("buy", buy);
+        values.put("planet", planet);
+        values.put("port", port);
+
+        db.update("starship", values, query, null);
+
+    }
+
+    public void updateStarshipPlanet(int id, int planet) {
+
+        String[] key = { "planet" };
+
+        int[] value = { planet };
+
+        String query = "id = "+ id;
+        ContentValues values = new ContentValues();
+
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
+        }
+
+        db.update("starship", values, query, null);
+
+    }
+
+    public void updateStarshipPort(int id, int port) {
+
+        String[] key = { "port" };
+
+        int[] value = { port };
+
+        String query = "id = "+ id;
+        ContentValues values = new ContentValues();
+
+        for(int i = 0; i < key.length; i++) {
+            values.put(key[i], value[i]);
+        }
 
         db.update("starship", values, query, null);
 
@@ -476,7 +556,7 @@ public class DatabaseAccess {
 
         if(cursor.moveToNext()) {
             ArrayList<String> list = new ArrayList<>();
-            for(int i = 0; i < 13; i++){
+            for(int i = 0; i < cursor.getColumnCount(); i++){
                 list.add(cursor.getString(i));
             }
             result.add(list);

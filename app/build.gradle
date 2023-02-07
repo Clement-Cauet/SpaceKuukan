@@ -10,7 +10,7 @@ android {
         applicationId "com.spacekuukan.application"
         minSdk 29
         targetSdk 32
-        versionCode 1
+        versionCode 100
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -41,6 +41,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

@@ -62,7 +62,7 @@
         </ScrollView>
 
         <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/background_space"
+            android:id="@+id/background_shop"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"

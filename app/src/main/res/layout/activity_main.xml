@@ -22,24 +22,28 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView7"
+                <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quadrangle"
-                    android:text="@string/credit" />
+                    android:layout_height="30dp"
+                    app:srcCompat="@mipmap/credit" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <TextView
                     android:id="@+id/credit_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/quadrangle"/>
+                    android:fontFamily="@font/quadrangle" />
+
             </LinearLayout>
 
         </LinearLayout>
@@ -55,25 +59,27 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView3"
+                <ImageView
+                    android:id="@+id/imageView2"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quadrangle"
-                    android:text="@string/hydrogen"/>
+                    android:layout_height="30dp"
+                    app:srcCompat="@mipmap/hydrogen" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <TextView
                     android:id="@+id/hydrogen_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/quadrangle"/>
+                    android:fontFamily="@font/quadrangle" />
+
             </LinearLayout>
 
         </LinearLayout>

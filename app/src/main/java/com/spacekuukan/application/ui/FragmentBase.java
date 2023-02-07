@@ -7,33 +7,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 
 import com.spacekuukan.application.R;
 import com.spacekuukan.application.databinding.FragmentBaseBinding;
 import com.spacekuukan.application.db.DatabaseAccess;
-import com.spacekuukan.application.db.DatabaseThread;
-import com.spacekuukan.application.function.Base;
 import com.spacekuukan.application.function.InstanceFunction;
 import com.spacekuukan.application.function.ManageSystem;
+import com.spacekuukan.application.function.Spaceport;
+import com.spacekuukan.application.function.Starship;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentBase extends Fragment {
 
-    private Base base;
     private InstanceFunction instanceFunction;
     private DatabaseAccess databaseAccess;
     private ManageSystem manageSystem;
+
+    private Spaceport spaceport;
+    private Starship starship;
 
     private FragmentBaseBinding binding;
 
@@ -78,6 +78,12 @@ public class FragmentBase extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     private void spacePortLayout() {
 
         base_page.removeAllViews();
@@ -90,10 +96,7 @@ public class FragmentBase extends Fragment {
 
         base_page.removeAllViews();
 
-        String[] title = {"", "Harvester", "Striker"};
-        for(int i = 1; i < title.length; i++) {
-            createBaseStarshipLayout(i, title[i]);
-        }
+        createBaseStarshipLayout("Starship");
 
     }
 
@@ -102,7 +105,6 @@ public class FragmentBase extends Fragment {
         LinearLayout base_layout = new LinearLayout(getContext());
         base_layout.setOrientation(LinearLayout.VERTICAL);
         base_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        base_layout.setBackgroundColor(base_layout.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) base_layout.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -134,13 +136,15 @@ public class FragmentBase extends Fragment {
         LinearLayout base_content = new LinearLayout(getContext());
         base_content.setOrientation(LinearLayout.VERTICAL);
         base_content.setPadding(10,0, 10, 0);
-        base_content.setBackgroundColor(base_content.getResources().getColor(R.color.white));
         base_content.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         base_layout.addView(base_content);
 
-        ArrayList selectSpaceport = databaseAccess.selectSpaceport(true);
-        for(int item = 0; item < selectSpaceport.size(); item++) {
-            createBaseSpaceportItemLayout(base_content, selectSpaceport, item);
+        ArrayList spaceportList = instanceFunction.getSpaceportList();
+        for (int i = 0; i < spaceportList.size(); i++) {
+            spaceport = (Spaceport) spaceportList.get(i);
+            if (spaceport.getBuy() == 1) {
+                createBaseSpaceportItemLayout(base_content);
+            }
         }
 
         if(base_content.getChildCount() > 0) {
@@ -166,14 +170,11 @@ public class FragmentBase extends Fragment {
 
     }
 
-    private void createBaseSpaceportItemLayout(LinearLayout base_content, ArrayList selectSpaceport, int item) {
-
-        ArrayList starship = (ArrayList) selectSpaceport.get(item);
+    private void createBaseSpaceportItemLayout(LinearLayout base_content) {
 
         LinearLayout base_item = new LinearLayout(getContext());
         base_item.setOrientation(LinearLayout.VERTICAL);
         base_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        base_item.setBackgroundColor(base_item.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) base_item.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -184,7 +185,7 @@ public class FragmentBase extends Fragment {
         title_item.setOrientation(LinearLayout.HORIZONTAL);
         title_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         title_item.setPadding(30, 30, 30, 30);
-        title_item.setId((Integer.valueOf((String) starship.get(0))));
+        title_item.setId(spaceport.getId());
         title_item.setWeightSum(10);
         base_item.addView(title_item);
 
@@ -198,11 +199,11 @@ public class FragmentBase extends Fragment {
         params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_title_text.gravity = Gravity.CENTER;
         title_text.setLayoutParams(params_title_text);
-        if(starship.get(2) != null)
-            title_text.setText(starship.get(2).toString());
+        if(spaceport.getNickname() != null)
+            title_text.setText(spaceport.getNickname());
         else
-            title_text.setText(starship.get(1).toString());
-        title_text.setTextSize(14);
+            title_text.setText(spaceport.getName());
+        title_text.setTextSize(12);
         title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         title_text_layout.addView(title_text);
 
@@ -217,7 +218,7 @@ public class FragmentBase extends Fragment {
         params_sell_text.gravity = Gravity.CENTER;
         sell_text.setLayoutParams(params_title_text);
         sell_text.setText(R.string.sell_button);
-        sell_text.setTextSize(14);
+        sell_text.setTextSize(12);
         sell_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         sell_text_layout.addView(sell_text);
 
@@ -236,19 +237,27 @@ public class FragmentBase extends Fragment {
         sell_text_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(manageSystem.sellStarship(starship))
-                    base_item.setVisibility(View.GONE);
+                spaceport = (Spaceport) instanceFunction.getSpaceportList().get(Integer.valueOf(title_item.getId()) - 1);
+                if (spaceport.getStarshipStation().size() == 0) {
+                    if (manageSystem.sellSpaceport(title_item.getId())) {
+                        base_item.setVisibility(View.GONE);
+                        Toast.makeText(getContext(), spaceport.getName() + " hase been sold", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "You must keep at least 1 spaceport", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getContext(), spaceport.getName() + " isn't empty", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
 
-    private void createBaseStarshipLayout(int type, String title) {
+    private void createBaseStarshipLayout(String title) {
 
         LinearLayout base_layout = new LinearLayout(getContext());
         base_layout.setOrientation(LinearLayout.VERTICAL);
         base_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        base_layout.setBackgroundColor(base_layout.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) base_layout.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -280,13 +289,15 @@ public class FragmentBase extends Fragment {
         LinearLayout base_content = new LinearLayout(getContext());
         base_content.setOrientation(LinearLayout.VERTICAL);
         base_content.setPadding(10,0, 10, 0);
-        base_content.setBackgroundColor(base_content.getResources().getColor(R.color.white));
         base_content.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         base_layout.addView(base_content);
 
-        ArrayList selectStarship = databaseAccess.selectStarship(type, true);
-        for(int item = 0; item < selectStarship.size(); item++) {
-            createBaseStarshipItemLayout(base_content, selectStarship, item);
+        ArrayList starshipList = instanceFunction.getStarshipList();
+        for (int i = 0; i < starshipList.size(); i++) {
+            starship = (Starship) starshipList.get(i);
+            if (starship.getBuy() == 1) {
+                createBaseStarshipItemLayout(base_content);
+            }
         }
 
         if(base_content.getChildCount() > 0) {
@@ -312,14 +323,11 @@ public class FragmentBase extends Fragment {
 
     }
 
-    private void createBaseStarshipItemLayout(LinearLayout base_content, ArrayList selectStarship, int item) {
-
-        ArrayList starship = (ArrayList) selectStarship.get(item);
+    private void createBaseStarshipItemLayout(LinearLayout base_content) {
 
         LinearLayout base_item = new LinearLayout(getContext());
         base_item.setOrientation(LinearLayout.VERTICAL);
         base_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        base_item.setBackgroundColor(base_item.getResources().getColor(R.color.white));
         LinearLayout.LayoutParams params_category_layout;
         params_category_layout = (LinearLayout.LayoutParams) base_item.getLayoutParams();
         params_category_layout.setMargins(0, 0, 0, 50);
@@ -330,9 +338,18 @@ public class FragmentBase extends Fragment {
         title_item.setOrientation(LinearLayout.HORIZONTAL);
         title_item.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         title_item.setPadding(30, 30, 30, 30);
-        title_item.setId((Integer.valueOf((String) starship.get(0))));
-        title_item.setWeightSum(8);
+        title_item.setId(starship.getId());
+        title_item.setWeightSum(10);
         base_item.addView(title_item);
+
+        LinearLayout title_text_layout = new LinearLayout(getContext());
+        title_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 8));
+        title_item.addView(title_text_layout);
+
+        ImageView starship_image = new ImageView(getContext());
+        starship_image.setLayoutParams(new LinearLayout.LayoutParams(60, 60));
+        starship_image.setImageResource(starship.getImageStarshipId()[starship.getId() - 1]);
+        title_text_layout.addView(starship_image);
 
         TextView title_text = new TextView(getContext());
         title_text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 5));
@@ -340,13 +357,13 @@ public class FragmentBase extends Fragment {
         params_title_text = (LinearLayout.LayoutParams) title_text.getLayoutParams();
         params_title_text.gravity = Gravity.CENTER;
         title_text.setLayoutParams(params_title_text);
-        if(starship.get(2) != null)
-            title_text.setText(starship.get(2).toString());
+        if(starship.getNickname() != null)
+            title_text.setText(starship.getNickname());
         else
-            title_text.setText(starship.get(1).toString());
-        title_text.setTextSize(14);
+            title_text.setText(starship.getName());
+        title_text.setTextSize(12);
         title_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
-        title_item.addView(title_text);
+        title_text_layout.addView(title_text);
 
         LinearLayout sell_text_layout = new LinearLayout(getContext());
         sell_text_layout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 2));
@@ -359,7 +376,7 @@ public class FragmentBase extends Fragment {
         params_sell_text.gravity = Gravity.CENTER;
         sell_text.setLayoutParams(params_title_text);
         sell_text.setText(R.string.sell_button);
-        sell_text.setTextSize(14);
+        sell_text.setTextSize(12);
         sell_text.setTypeface(title_text.getResources().getFont(R.font.quadrangle));
         sell_text_layout.addView(sell_text);
 
@@ -378,16 +395,18 @@ public class FragmentBase extends Fragment {
         sell_text_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(manageSystem.sellStarship(starship))
+                starship = (Starship) instanceFunction.getStarshipList().get(Integer.valueOf(title_item.getId()) - 1);
+                spaceport = (Spaceport) instanceFunction.getSpaceportList().get(starship.getPort() - 1);
+                if(manageSystem.sellStarship(title_item.getId())) {
+                    spaceport.getStarshipStation().remove(starship);
                     base_item.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), starship.getName() + " hase been sold", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "You must keep at least 1 starship", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
 }

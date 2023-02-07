@@ -23,4 +23,8 @@ public class BackgroundMusicThread extends Thread {
         main_theme.start();
     }
 
+    public void stopMainTheme() {
+        main_theme.stop();
+    }
+
 }
